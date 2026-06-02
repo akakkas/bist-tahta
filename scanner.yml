@@ -1,0 +1,63 @@
+name: BİST Tahtacı Scanner
+
+on:
+  schedule:
+    # Her 30 dakikada bir çalışır (UTC).
+    # BİST 07:00–15:10 UTC (10:00–18:10 TRT) — sabah öncesi çalışmalar Python'da filtrelenir.
+    # Pazartesi–Cuma, 06:45–15:15 UTC arası aktif.
+    - cron: "*/30 7-15 * * 1-5"
+
+  # Elle tetiklemek için
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: "Borsa saatini atla ve zorla çalıştır"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+jobs:
+  tara:
+    name: BİST Tarama
+    runs-on: ubuntu-latest
+    timeout-minutes: 20  # yfinance yavaş olursa kes
+
+    steps:
+      - name: Kodu al
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Bağımlılıkları yükle
+        run: pip install -r requirements.txt
+
+      - name: Taramayı çalıştır
+        env:
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FORCE_RUN:        ${{ github.event.inputs.force_run }}
+        run: python main.py
+
+      - name: Hata durumunda bildir
+        if: failure()
+        env:
+          TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python -c "
+          import os, requests
+          token = os.getenv('TELEGRAM_TOKEN')
+          chat  = os.getenv('TELEGRAM_CHAT_ID')
+          if token and chat:
+              requests.post(
+                  f'https://api.telegram.org/bot{token}/sendMessage',
+                  json={'chat_id': chat, 'text': '❌ BİST Scanner: GitHub Actions hatası! Loglara bak.'}
+              )
+          "
