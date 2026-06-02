@@ -11,8 +11,8 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 # ── Tarama Parametreleri ───────────────────────────────────
 INTERVAL          = "15m"   # yfinance veri aralığı
 LOOKBACK_PERIOD   = "5d"    # kaç günlük veri çekilsin
-BATCH_SIZE        = 20      # aynı anda kaç hisse çekilsin (rate limit)
-BATCH_DELAY_SEC   = 2.0     # batch'ler arası bekleme (saniye)
+BATCH_SIZE        = 10      # aynı anda kaç hisse çekilsin (rate limit)
+BATCH_DELAY_SEC   = 8.0     # batch'ler arası bekleme (saniye)
 
 # ── Sinyal Eşikleri ────────────────────────────────────────
 # Hacim anomalisi
