@@ -1,0 +1,47 @@
+# Yıldız Pazar başlangıç listesi — DOĞRULA!
+# Pazar üyeliği zamanla değişir. Aşağıdakiler büyük olasılıkla Yıldız
+# Pazar'da olan likit isimler, ama güncel listeyi BİST'ten / aracı
+# kurumundan teyit et. '#' ile başlayan satırlar yok sayılır.
+# Sembolleri uzantısız yaz (THYAO), tarayıcı '.IS'yi kendi ekler.
+THYAO
+ASELS
+KCHOL
+SAHOL
+EREGL
+SISE
+TUPRS
+BIMAS
+FROTO
+TOASO
+TCELL
+TTKOM
+GARAN
+AKBNK
+ISCTR
+YKBNK
+VAKBN
+HALKB
+PETKM
+KRDMD
+SASA
+HEKTS
+ARCLK
+VESTL
+PGSUS
+TAVHL
+ENKAI
+OYAKC
+CIMSA
+GUBRF
+ALARK
+EKGYO
+TKFEN
+ASTOR
+MGROS
+ULKER
+AEFES
+DOAS
+KOZAL
+KOZAA
+KONTR
+SOKM
