@@ -1,0 +1,50 @@
+# .github/workflows/yildiz_scan.yml
+# Yıldız Pazar pre-breakout tarayıcısı — kapanış sonrası günlük tarama.
+# Eski tahtacı botunla çakışmaz; ayrı workflow olarak bağımsız çalışır.
+
+name: Yildiz Pre-Breakout Scan
+
+on:
+  schedule:
+    - cron: "30 15 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Kodu çek
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Bağımlılıklar
+        run: pip install yfinance pandas numpy
+
+      - name: Taramayı çalıştır
+        run: >
+          python yildiz_breakout_scanner.py
+          --universe yildiz.txt
+          --only-passed
+          --out sonuc.csv
+
+      - name: Telegram'a bildir
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python notify_yildiz.py sonuc.csv
+
+      - name: Sonucu artifact olarak sakla
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yildiz-sonuc
+          path: sonuc.csv
+          if-no-files-found: ignore
