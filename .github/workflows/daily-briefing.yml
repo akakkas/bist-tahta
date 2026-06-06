@@ -1,0 +1,33 @@
+name: Günlük Makro Bülten
+
+on:
+  schedule:
+    # Her hafta içi 08:00 TR saati = 05:00 UTC
+    - cron: '0 5 * * 1-5'
+  workflow_dispatch:   # Elle de tetiklenebilir
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Kodu çek
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Bağımlılıkları yükle
+        run: pip install requests google-generativeai
+
+      - name: Günlük bülten gönder
+        env:
+          FMP_API_KEY:         ${{ secrets.FMP_API_KEY }}
+          GEMINI_API_KEY:      ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:    ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python daily_briefing.py
