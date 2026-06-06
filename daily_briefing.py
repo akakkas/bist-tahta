@@ -12,7 +12,9 @@ import os
 import sys
 import requests
 from datetime import date, datetime, timezone, timedelta
-from google import genai
+import warnings
+warnings.filterwarnings("ignore")
+import google.generativeai as genai
 
 # ── Config ────────────────────────────────────────────────
 GEMINI_API_KEY     = os.environ.get("GEMINI_API_KEY", "")
@@ -111,11 +113,9 @@ Bu verileri BIST açısından Türkçe ve net yorumla:
 Maksimum 7 cümle, sade ve direkt yaz."""
 
     try:
-        client   = genai.Client(api_key=GEMINI_API_KEY)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt
-        )
+        genai.configure(api_key=GEMINI_API_KEY)
+        model    = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
         print(f"Gemini hatası: {e}")
