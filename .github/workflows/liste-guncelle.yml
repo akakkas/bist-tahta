@@ -1,0 +1,41 @@
+name: Hisse Listesi Güncelle
+
+# Haftalık liste yenileme. Zaman kritik değil, GitHub native cron yeterli.
+# Elle de tetiklenebilir (Actions sekmesi) veya cron-job.org dispatch ile.
+on:
+  schedule:
+    - cron: "0 6 * * 1"      # her Pazartesi 06:00 UTC (~09:00 TR)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write              # commit/push için gerekli
+
+jobs:
+  guncelle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Bağımlılık
+        run: pip install requests
+
+      - name: Listeyi üret
+        run: python liste_uret.py
+
+      - name: Değişiklik varsa commit'le
+        run: |
+          if git diff --quiet -- hisse_listesi.py; then
+            echo "Liste değişmedi, commit yok."
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add hisse_listesi.py
+            git commit -m "chore: hisse listesi otomatik güncellendi"
+            git push
+          fi
