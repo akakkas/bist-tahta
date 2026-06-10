@@ -23,7 +23,7 @@ jobs:
           python-version: "3.11"
 
       - name: Bağımlılık
-        run: pip install requests
+        run: pip install pykap
 
       - name: Listeyi üret
         run: python liste_uret.py
